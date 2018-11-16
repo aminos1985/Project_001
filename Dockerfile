@@ -1,4 +1,3 @@
-# Image de base
 FROM debian:jessie
 
 # Installation de curl avec apt-get
