@@ -33,7 +33,8 @@ pipeline {
         stage('Test') {
             steps {
               echo '=== Test ==='
-              sh 'sleep 2' 
+              sh 'sleep 2'
+              sh 'ls -la' 
               input 'Go to the Next Step :'
 
             }
