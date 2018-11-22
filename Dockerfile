@@ -1,32 +1,28 @@
-FROM debian:jessie
-
-# Installation de curl avec apt-get
-RUN apt-get update \
-&& apt-get install -y curl \
-&& rm -rf /var/lib/apt/lists/*
+FROM ubuntu:14.04
+    
+RUN apt-get update
+RUN apt-get install -y htop apache2 openssh-server nmap
 
 # Installation de Node.js à partir du site officiel
-RUN curl -LO "https://nodejs.org/dist/v0.12.5/node-v0.12.5-linux-x64.tar.gz" \
-&& tar -xzf node-v0.12.5-linux-x64.tar.gz -C /usr/local --strip-components=1 \
-&& rm node-v0.12.5-linux-x64.tar.gz
+#RUN curl -LO "https://nodejs.org/dist/v0.12.5/node-v0.12.5-linux-x64.tar.gz" \
+#&& tar -xzf node-v0.12.5-linux-x64.tar.gz -C /usr/local --strip-components=1 \
+#&& rm node-v0.12.5-linux-x64.tar.gz
 
 # Ajout du fichier de dépendances package.json
-ADD package.json /app/
+#ADD package.json /app/
 
 # Changement du repertoire courant
-WORKDIR /app
+WORKDIR ~
 
-# Installation des dépendances
-RUN npm install
 
 # Ajout des sources
-ADD . /app/
+#ADD . /app/
 
 # On expose le port 3000
 EXPOSE 3000
 
 # On partage un dossier de log
-VOLUME /app/log
+VOLUME /var/log
 
 # On lance le serveur quand on démarre le conteneur
-CMD node server.js
+#CMD node server.js
