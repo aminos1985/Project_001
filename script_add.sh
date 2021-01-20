@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Test valeur 1"
+cat /home/test
