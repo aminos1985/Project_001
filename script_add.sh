@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cat /home/test
+cat /home/jenkins/test
 
 sleep 100
