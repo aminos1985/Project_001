@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: create container
+      docker_container:
+        name: ansible-test
+        image: ubuntu:bionic
+        command: bash
+        detach: true
+        interactive: true
+        tty: true
+
+    - name: add docker container to inventory
+      add_host:
+        name: ansible-test
+        ansible_connection: docker
+
+- hosts: ansible-test
+  gather_facts: false
+  tasks:
+
+    - name: update apt cache
+      delegate_to: ansible-test
+      raw: apt -y update
+
+    - name: install python
+      delegate_to: ansible-test
+      raw: apt -y install python-minimal
+
+    - name: demonstrate that normal ansible modules work
+      file:
+        path: /etc/testdir
+        state: directory
