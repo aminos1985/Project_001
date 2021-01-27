@@ -1,35 +1,67 @@
 ---
 - hosts: localhost
-  gather_facts: false
 
   tasks:
     - name: create container
       docker_container:
-        name: ansible-test
-        image: ubuntu:bionic
+        name: slave01
+        image: slave:latest
         command: bash
+        hostname: slave01
+        published_ports: 1022:22
+        volumes: /var/lib/docker/volumes/slave01/_data/:/var
+        cpuset_cpus: 1
+        memory: 500m
         detach: true
         interactive: true
         tty: true
 
     - name: add docker container to inventory
       add_host:
-        name: ansible-test
+        name: slave01
         ansible_connection: docker
+        groups: webserver 
 
-- hosts: ansible-test
-  gather_facts: false
-  tasks:
+    - name: create container
+      docker_container:
+        name: slave02
+        image: slave:latest
+        command: bash
+        hostname: slave02
+        #published_ports: 2022:22
+        volumes: /var/lib/docker/volumes/slave02/_data/:/var
+        cpuset_cpus: 1
+        memory: 500m
+        detach: true
+        interactive: true
+        tty: true
 
-    - name: update apt cache
-      delegate_to: ansible-test
-      raw: apt -y update
+    - name: add docker container to inventory
+      add_host:
+        name: slave02
+        ansible_connection: docker
+        groups: webserver
 
-    - name: install python
-      delegate_to: ansible-test
-      raw: apt -y install python-minimal
+#      roles:    
+#      - name: “Project”
+#- hosts:  
+#  tasks:
 
-    - name: demonstrate that normal ansible modules work
-      file:
-        path: /etc/testdir
-        state: directory
+#    - name: update apt cache
+#      #delegate_to: ansible-test
+#      raw: apt -y update
+
+#    - name: install packages
+#      #delegate_to: ansible-test
+#      raw: apt -y install python-minimal openssh-server httpd
+
+#    - name: demonstrate that normal ansible modules work
+#      file:
+#        path: /etc/testdir
+#        state: directory
+
+#    - name: test specifique 
+#      delegate_to: slave02
+#      file:
+#        path: /etc/testSPEC
+#        state: directory
