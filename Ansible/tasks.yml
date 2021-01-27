@@ -1,0 +1,32 @@
+- name: Installation du serveur
+  hosts: all
+  remote_user: root
+  tasks:
+    - name: update apt cache
+      #delegate_to: ansible-test
+      raw: apt -y update
+
+    - name: install packages
+#      #delegate_to: ansible-test
+      raw: apt -y install python-minimal openssh-server httpd
+
+
+    
+- name: test crate workdir
+  hosts: webserver
+  tasks:
+    - name: create workspace web
+      file:
+        path: /etc/testweb
+        state: directory
+
+  hosts: db
+  tasks:
+    - name: create workspace db
+      #delegate_to: slave02
+      file:
+        path: /etc/testdb
+        state: directory
+
+
+
