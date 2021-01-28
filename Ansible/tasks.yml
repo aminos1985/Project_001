@@ -1,18 +1,71 @@
-- name: Installation du serveur
-  hosts: all
+      
+- name : Config systeme de base des machines
   remote_user: root
+  hosts: all
   tasks:
-    - name: update apt cache
-      #delegate_to: ansible-test
-      raw: apt -y update
 
-    - name: install packages
-#      #delegate_to: ansible-test
-      raw: apt -y install python-minimal openssh-server httpd
+#  - name: Remove file (delete file)
+#    ansible.builtin.file:
+#      path: /usr/bin/python
+#      state: absent
+
+#  - name: Create symlink to python3
+#    file: 
+#      path: /usr/bin/python3
+#      dest: /usr/bin/python 
+#      state: link
+
+  - name : install packages
+    apt:
+      name: 
+        - apache2
+        - vim
+        - htop
+      state: present
+      update_cache: yes
+
+- name : Install python 3.8
+  hosts: all
+  tasks:
+#    - name: Add repository PPA for Python
+#      ansible.builtin.apt_repository:
+#      repo: ppa:deadsnakes/ppa
+
+    - name : install packages python 
+      apt:
+        name: python3.8
+        state: present
+        update_cache: yes
+
+    - name: Hostname Machine 
+      shell: "hostname"
+      register: hostname
+
+    - name: IP Address  
+      shell: "hostname -I"
+      register: ip_addr
 
 
-    
-- name: test crate workdir
+    - name: Number Users
+      shell: "uptime | awk '{print $5}'"
+      register: users_nbr
+
+    - name: "Ansible | Print a variable if defined"  
+      debug:
+        msg: "- {{ hostname.stdout_lines }} ({{ ip_addr.stdout_lines }}) = {{ users_nbr.stdout_lines }}"
+
+#    - debug: var=out.stdout_lines
+
+#    - name: Shut down CentOS 6 systems
+#      ansible.builtin.command: touch /tmp/NIKE
+#      when:
+#        - ansible_facts['distribution'] == "Debian"
+#        - ansible_facts['distribution_major_version'] == "6"
+
+
+
+  
+- name: test create workdir WEB
   hosts: webserver
   tasks:
     - name: create workspace web
@@ -20,6 +73,7 @@
         path: /etc/testweb
         state: directory
 
+- name: test create workdir DB
   hosts: db
   tasks:
     - name: create workspace db
@@ -27,6 +81,8 @@
       file:
         path: /etc/testdb
         state: directory
+
+
 
 
 
